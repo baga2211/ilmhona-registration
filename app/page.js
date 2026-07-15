@@ -25,6 +25,7 @@ const COURSES = [
   "Golang lvl 1-2",
   "Мобилография",
   "Excel",
+  "isroil"
 ];
 
 const PHONE_CODES = [
