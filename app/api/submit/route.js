@@ -21,8 +21,6 @@ export async function POST(request) {
       "email",
       "course",
       "hasComputer",
-      "studyWork",
-      "russian",
       "source",
     ];
     for (const key of required) {

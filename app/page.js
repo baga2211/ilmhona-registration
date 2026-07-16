@@ -10,21 +10,28 @@ const COURSES = [
   "Frontend с 0",
   "JS lvl 1",
   "JS lvl 2",
-  "Android 0",
-  "Android 1",
-  "iOS lvl 0",
-  "iOS lvl 1",
+  // "Android 0",
+  // "Android 1",
+  // "iOS lvl 0",
+  // "iOS lvl 1",
   "Graphic Design",
-  "Graphic Design PRO",
+  "Graphic Design LVL 1",
   "UX/UI",
   "Digital Marketing",
   "IT Project Management",
   "Основы компьютера",
   "Основы программирования Scratch",
-  "C# lvl 1-2",
-  "Golang lvl 1-2",
-  "Мобилография",
+  // "C# lvl 1-2",
+  // "Golang lvl 1-2",
+  "Мобилография c нуля",
+  "Кинемотография",
   "Excel",
+  "Базы Данных",
+  "Product Design",
+  "Кинопроизводство",
+  "Цифровая иллюстрация ",
+  "Введение в кибербезопасность",
+  "Blender Advanced: профессиональная 3D-графика",
   
 ];
 
@@ -47,13 +54,11 @@ const SOURCES = [
 const initial = {
   firstName: "",
   lastName: "",
-  phoneCode: "+992",
+  phoneCode: "",
   phone: "",
   email: "",
   course: "",
   hasComputer: "",
-  studyWork: "",
-  russian: "",
   source: "",
 };
 
@@ -77,8 +82,6 @@ export default function Home() {
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) err.email = true;
     if (!form.course) err.course = true;
     if (!form.hasComputer) err.hasComputer = true;
-    if (!form.studyWork.trim()) err.studyWork = true;
-    if (!form.russian) err.russian = true;
     if (!form.source) err.source = true;
     setErrors(err);
     return Object.keys(err).length === 0;
@@ -205,25 +208,6 @@ export default function Home() {
             </select>
           </div>
 
-          <div className="field">
-            <input
-              className={`input ${errors.studyWork ? "error" : ""}`}
-              placeholder="-- Где вы учитесь/работаете?"
-              value={form.studyWork}
-              onChange={set("studyWork")}
-            />
-          </div>
-
-          <div className="field">
-            <select className={selectCls("russian")} value={form.russian} onChange={set("russian")}>
-              <option value="" disabled>
-                -- Владеете ли вы русским языком?
-              </option>
-              <option value="Да">Да</option>
-              <option value="Немного">Немного</option>
-              <option value="Нет">Нет</option>
-            </select>
-          </div>
 
           <div className="field">
             <select className={selectCls("source")} value={form.source} onChange={set("source")}>
@@ -251,15 +235,8 @@ export default function Home() {
           </p>
 
           <div className="socials">
-            <a className="social" href="#" target="_blank" rel="noreferrer">
-              <span className="social-icon messenger">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.42 5.45 3.65 7.15V22l3.34-1.84c.95.26 1.96.4 3.01.4 5.5 0 10-4.14 10-9.25S17.5 2 12 2zm1.06 12.44l-2.56-2.73-4.99 2.73 5.49-5.82 2.62 2.73 4.93-2.73-5.49 5.82z" />
-                </svg>
-              </span>
-              Messenger
-            </a>
-            <a className="social" href="#" target="_blank" rel="noreferrer">
+            
+            <a className="social" href="@ilmhonaonline" target="_blank" rel="noreferrer">
               <span className="social-icon telegram">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M9.04 15.31l-.38 5.32c.54 0 .78-.23 1.06-.51l2.55-2.44 5.28 3.87c.97.53 1.66.25 1.92-.9L22.9 4.4c.31-1.43-.52-1.99-1.46-1.64L3.1 9.87c-1.4.54-1.38 1.32-.24 1.67l4.69 1.46 10.88-6.87c.51-.31.98-.14.6.2L9.04 15.31z" />
@@ -267,15 +244,13 @@ export default function Home() {
               </span>
               Telegram
             </a>
-            <a className="social" href="#" target="_blank" rel="noreferrer">
+            <a className="social" href="https://ilmhona.org/" target="_blank" rel="noreferrer">
               <span className="social-icon site">WWW</span>
               Сайт
             </a>
           </div>
 
-          <p className="made-with">
-            Made with <span className="heart">♥</span> by Ilmhona
-          </p>
+        
         </>
       )}
     </main>
