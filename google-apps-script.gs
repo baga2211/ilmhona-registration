@@ -1,22 +1,13 @@
 /**
- * ILMHONA — приём заявок в Google Таблицу
- * ---------------------------------------
- * Как это работает:
- *  1. Каждая заявка попадает в общий лист "Все заявки".
- *  2. Дополнительно создаётся/дополняется отдельный лист для каждого
- *     курса и месяца (потока), например: "Python lvl 1 — 07.2026".
- *     Так все студенты Python за июль лежат отдельно от августовских.
+ * ILMHONA — приём заявок в Google Таблицу (версия 2)
+ * ---------------------------------------------------
+ * ШАГ 1: Вставь ID своей таблицы в строку ниже.
  *
- * Установка:
- *  1. Создайте Google Таблицу (sheets.google.com).
- *  2. Расширения → Apps Script → вставьте этот код целиком.
- *  3. Нажмите "Развернуть" → "Новое развёртывание" → тип "Веб-приложение".
- *     - "Выполнять от имени": Я (ваш аккаунт)
- *     - "У кого есть доступ": Все
- *  4. Скопируйте URL веб-приложения и вставьте его в .env.local
- *     проекта Next.js как GOOGLE_SCRIPT_URL.
+ * ID — это длинный код из адресной строки таблицы:
+ * https://docs.google.com/spreadsheets/d/1j3QuD2T0r7OhRkCIyzI-Iw7u6VFT7UMejyBv_5RQCWk/edit?gid=0#gid=0/edit
+ *                                        ^^^^^^^^^^^^^^^^^^^^
  */
-
+var SPREADSHEET_ID = "1j3QuD2T0r7OhRkCIyzI-Iw7u6VFT7UMejyBv_5RQCWk";
 var MONTHS_RU = [
   "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
@@ -33,12 +24,25 @@ var HEADERS = [
   "Есть компьютер",
   "Учёба / работа",
   "Русский язык",
-  "Откуда узнал(а)",
-  // Дальше — колонки для ручного заполнения менеджером, скрипт их не трогает
-  "Кто позвонил",
-  "Придёт? (да/нет)",
-  "Комментарий"
+  "Откуда узнал(а)"
 ];
+
+// Номер телефона — колонка "Телефон" в HEADERS (1-based индекс)
+var PHONE_COL = HEADERS.indexOf("Телефон") + 1;
+
+function getSpreadsheet() {
+  // Сначала пробуем по ID, если не задан — пробуем активную таблицу
+  if (SPREADSHEET_ID && SPREADSHEET_ID.indexOf("ВСТАВЬ") === -1) {
+    return SpreadsheetApp.openById(SPREADSHEET_ID);
+  }
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error(
+      "Таблица не найдена. Вставь SPREADSHEET_ID в начало скрипта."
+    );
+  }
+  return ss;
+}
 
 function doPost(e) {
   try {
@@ -63,7 +67,7 @@ function doPost(e) {
       data.source || ""
     ];
 
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = getSpreadsheet();
 
     // 1) Общий лист со всеми заявками
     appendToSheet(ss, "Все заявки", row);
@@ -96,17 +100,33 @@ function appendToSheet(ss, name, row) {
       sheet.setColumnWidth(i, 160);
     }
   }
-  sheet.appendRow(row);
+
+  // Без этого Google Sheets сам определяет тип ячейки по содержимому и
+  // превращает телефон вида "006220942" в число, обрезая ведущие нули.
+  var nextRow = sheet.getLastRow() + 1;
+  sheet.getRange(nextRow, PHONE_COL).setNumberFormat("@");
+  sheet.getRange(nextRow, 1, 1, row.length).setValues([row]);
 }
 
-// Название листа в Google Sheets не может содержать некоторые символы
+// Название листа не может содержать некоторые символы
 function sanitize(name) {
   return String(name || "Без курса")
     .replace(/[\/\\\?\*\[\]:]/g, "-")
     .slice(0, 80);
 }
 
-// Проверка, что скрипт жив (открыть URL в браузере)
+/**
+ * Проверка в браузере: открой /exec URL.
+ * Если всё настроено — увидишь "работает" и название таблицы.
+ * Если есть проблема — увидишь текст ошибки.
+ */
 function doGet() {
-  return ContentService.createTextOutput("Ilmhona script работает ✓");
+  try {
+    var ss = getSpreadsheet();
+    return ContentService.createTextOutput(
+      "Ilmhona script работает ✓ Таблица: " + ss.getName()
+    );
+  } catch (err) {
+    return ContentService.createTextOutput("Ошибка: " + String(err));
+  }
 }
