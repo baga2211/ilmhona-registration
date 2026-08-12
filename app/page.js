@@ -66,6 +66,7 @@ const initial = {
   phoneCode: "",
   phone: "",
   email: "",
+  telegram: "",
   course: "",
   hasComputer: "",
   source: "",
@@ -89,6 +90,7 @@ export default function Home() {
     if (!form.lastName.trim()) err.lastName = true;
     if (!/^[\d\s-]{6,15}$/.test(form.phone.trim())) err.phone = true;
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) err.email = true;
+    if (!form.telegram.trim()) err.telegram = true;
     if (!form.course) err.course = true;
     if (!form.hasComputer) err.hasComputer = true;
     if (!form.source) err.source = true;
@@ -187,6 +189,15 @@ export default function Home() {
               type="email"
               value={form.email}
               onChange={set("email")}
+            />
+          </div>
+
+          <div className="field">
+            <input
+              className={`input ${errors.telegram ? "error" : ""}`}
+              placeholder="Ваш Telegram (например @username)"
+              value={form.telegram}
+              onChange={set("telegram")}
             />
           </div>
 

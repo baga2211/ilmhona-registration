@@ -24,7 +24,8 @@ var HEADERS = [
   "Есть компьютер",
   "Учёба / работа",
   "Русский язык",
-  "Откуда узнал(а)"
+  "Откуда узнал(а)",
+  "Telegram"
 ];
 
 // Номер телефона — колонка "Телефон" в HEADERS (1-based индекс)
@@ -64,7 +65,8 @@ function doPost(e) {
       data.hasComputer || "",
       data.studyWork || "",
       data.russian || "",
-      data.source || ""
+      data.source || "",
+      data.telegram || ""
     ];
 
     var ss = getSpreadsheet();
@@ -98,6 +100,20 @@ function appendToSheet(ss, name, row) {
     sheet.setFrozenRows(1);
     for (var i = 1; i <= HEADERS.length; i++) {
       sheet.setColumnWidth(i, 160);
+    }
+  } else {
+    // Лист уже существовал (со старыми заявками) и в HEADERS с тех пор
+    // добавились новые колонки (например, "Telegram") — дописываем только
+    // недостающие заголовки в конец, старые данные при этом не трогаем.
+    var lastCol = sheet.getLastColumn();
+    if (lastCol < HEADERS.length) {
+      var missing = HEADERS.slice(lastCol);
+      sheet.getRange(1, lastCol + 1, 1, missing.length)
+        .setValues([missing])
+        .setFontWeight("bold")
+        .setBackground("#2F80ED")
+        .setFontColor("#FFFFFF");
+      sheet.setColumnWidth(lastCol + 1, 160);
     }
   }
 
