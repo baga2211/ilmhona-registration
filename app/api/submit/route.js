@@ -18,7 +18,6 @@ export async function POST(request) {
       "firstName",
       "lastName",
       "phone",
-      "email",
       "telegram",
       "course",
       "hasComputer",

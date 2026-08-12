@@ -65,7 +65,6 @@ const initial = {
   lastName: "",
   phoneCode: "",
   phone: "",
-  email: "",
   telegram: "",
   course: "",
   hasComputer: "",
@@ -89,7 +88,6 @@ export default function Home() {
     if (!form.firstName.trim()) err.firstName = true;
     if (!form.lastName.trim()) err.lastName = true;
     if (!/^[\d\s-]{6,15}$/.test(form.phone.trim())) err.phone = true;
-    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) err.email = true;
     if (!form.telegram.trim()) err.telegram = true;
     if (!form.course) err.course = true;
     if (!form.hasComputer) err.hasComputer = true;
@@ -180,16 +178,6 @@ export default function Home() {
                 onChange={set("phone")}
               />
             </div>
-          </div>
-
-          <div className="field">
-            <input
-              className={`input ${errors.email ? "error" : ""}`}
-              placeholder="Ваш email"
-              type="email"
-              value={form.email}
-              onChange={set("email")}
-            />
           </div>
 
           <div className="field">
