@@ -20,6 +20,7 @@ export async function POST(request) {
       "phone",
       "telegram",
       "course",
+      "streamMonth",
       "hasComputer",
       "source",
     ];

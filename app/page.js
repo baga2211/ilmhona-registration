@@ -3,17 +3,12 @@
 import { useState } from "react";
 
 const COURSES = [
-  // "Основы AI",
-  // "Python lvl 0",
-  // "Python lvl 1",
-  // "Python lvl 2",
-  // "Frontend с 0",
-  // "JS lvl 1",
-  // "JS lvl 2",
-  // "Android 0",
-  // "Android 1",
-  // "iOS lvl 0",
-  // "iOS lvl 1",
+  "Основы AI",
+  "Python lvl 1",
+  "Python lvl 2",
+  "Frontend с 0",
+  "JS lvl 1",
+  "JS lvl 2",
   "Graphic Design lvl 0",
   "Graphic Design",
   "Graphic Design LVL 1",
@@ -21,28 +16,52 @@ const COURSES = [
   "Мобилография с нуля",
   "Excel для начинающих",
   "Devops",
-  // "UX/UI",
-  // "Digital Marketing",
-  // "IT Project Management",
+  "UX/UI",
+  "Digital Marketing",
+  "IT Project Management",
   "Основы компьютерный грамотности",
-  // "Основы программирования Scratch",
-  // "C# lvl 1-2",
-  // "Golang lvl 1-2",
-  // "Мобилография c нуля",
-  // "Кинемотография",
-  // "Excel",
-  // "Базы Данных",
-  // "Product Design",
-  // "Кинопроизводство",
-  // "Цифровая иллюстрация ",
-  // "Введение в кибербезопасность",
-  // "Blender Advanced: профессиональная 3D-графика",
+  "Основы программирования Scratch",
+  "C# lvl 0",
+  "Golang lvl 0",
+  "Мобилография c нуля",
+  "Кинемотография",
+  "Excel",
+  "Базы Данных",
+  "Product Design",
+  "Кинопроизводство",
+  "Цифровая иллюстрация ",
+  "Введение в кибербезопасность",
+  "Blender Advanced: профессиональная 3D-графика",
   "Vibe Coding",
   "SMM Express",
   "Python Базовый Уровень",
   
   
 ];
+
+const MONTHS_RU = [
+  "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+  "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+];
+
+// Все 12 месяцев, январь → декабрь. В подписи года нет.
+// Но в value год всё равно есть ("09.2026") — он нужен таблице, чтобы
+// сентябрь 2026 и сентябрь 2027 попали в разные листы. Год выбирается сам:
+// если месяц уже прошёл в этом году — берётся следующий год.
+function buildStreamOptions() {
+  const now = new Date();
+  const curMonth = now.getMonth(); // 0..11
+  const curYear = now.getFullYear();
+  return MONTHS_RU.map((name, i) => {
+    const year = i < curMonth ? curYear + 1 : curYear;
+    return {
+      value: `${String(i + 1).padStart(2, "0")}.${year}`,
+      label: name,
+    };
+  });
+}
+
+const STREAM_OPTIONS = buildStreamOptions();
 
 const PHONE_CODES = [
   { code: "+992", flag: "🇹🇯" },
@@ -67,6 +86,7 @@ const initial = {
   phone: "",
   telegram: "",
   course: "",
+  streamMonth: "",
   hasComputer: "",
   source: "",
 };
@@ -90,6 +110,7 @@ export default function Home() {
     if (!/^[\d\s-]{6,15}$/.test(form.phone.trim())) err.phone = true;
     if (!form.telegram.trim()) err.telegram = true;
     if (!form.course) err.course = true;
+    if (!form.streamMonth) err.streamMonth = true;
     if (!form.hasComputer) err.hasComputer = true;
     if (!form.source) err.source = true;
     setErrors(err);
@@ -128,7 +149,13 @@ export default function Home() {
           <div className="thanks-icon">✓</div>
           <h2>Заявка отправлена!</h2>
           <p>
-            Спасибо за регистрацию на курс «{form.course}».
+            Спасибо за регистрацию на курс «{form.course}»
+            {form.streamMonth &&
+              ` (поток ${
+                STREAM_OPTIONS.find((m) => m.value === form.streamMonth)?.label ||
+                form.streamMonth
+              })`}
+            .
             <br />
             Мы свяжемся с вами в ближайшее время.
           </p>
@@ -197,6 +224,23 @@ export default function Home() {
               {COURSES.map((c) => (
                 <option key={c} value={c}>
                   {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <select
+              className={selectCls("streamMonth")}
+              value={form.streamMonth}
+              onChange={set("streamMonth")}
+            >
+              <option value="" disabled>
+                -- На какой месяц (поток) записываетесь?
+              </option>
+              {STREAM_OPTIONS.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
                 </option>
               ))}
             </select>
